@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ecomercer Nextjs",
+  title: "Ecommercer Nextjs",
   description: "Full-stack E-commerce simulator built with Next.js, 3-language i18n (EN/ES/PT), automated transactional emails, and a daily sales report cron job."
 };
 
