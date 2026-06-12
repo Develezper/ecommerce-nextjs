@@ -3,16 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { Heart } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  Typography,
-  IconButton,
-  Button,
-  Box,
-} from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 
 type ProductCardProps = {
   id: string;
@@ -38,53 +37,44 @@ export default function ProductCard({
   }).format(price);
 
   return (
-    <Card sx={{ maxWidth: 320, height: "100%", position: "relative" }}>
-      <Box sx={{ position: "relative", height: 220 }}>
+    <Card className="group overflow-hidden rounded-2xl border shadow-sm transition hover:shadow-md">
+      <CardHeader className="relative h-64 p-0">
         <Image
           src={image}
           alt={name}
           fill
-          style={{
-            objectFit: "cover",
-          }}
+          className="object-cover transition duration-300 group-hover:scale-105"
         />
 
-        <IconButton
+        <button
+          type="button"
           onClick={() => setIsFavorite(!isFavorite)}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            backgroundColor: "white",
-          }}
+          className="absolute right-3 top-3 rounded-full bg-white p-2 shadow transition hover:scale-105"
+          aria-label="Agregar a favoritos"
         >
-          {isFavorite ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-        </IconButton>
-      </Box>
+          <Heart
+            className={`h-5 w-5 ${
+              isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"
+            }`}
+          />
+        </button>
+      </CardHeader>
 
-      <CardContent>
-        <Typography variant="h6" component="h2">
-          {name}
-        </Typography>
+      <CardContent className="space-y-2 p-4">
+        <h3 className="line-clamp-1 text-lg font-semibold">{name}</h3>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <p className="line-clamp-2 text-sm text-muted-foreground">
           {shortDescription}
-        </Typography>
+        </p>
 
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          {formattedPrice}
-        </Typography>
-
-        <Button
-          component={Link}
-          href={`/products/${id}`}
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2 }}
-        >
-          Ver detalle
-        </Button>
+        <p className="text-lg font-bold text-rose-600">{formattedPrice}</p>
       </CardContent>
+
+      <CardFooter className="p-4 pt-0">
+        <Button asChild className="w-full">
+          <Link href={`/products/${id}`}>Ver detalle</Link>
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
