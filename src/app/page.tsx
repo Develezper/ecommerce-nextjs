@@ -1,16 +1,9 @@
 import ProductCard from "@/components/products/ProductCard";
 import { getProducts } from "@/services/product.service";
-
-type Product = {
-  _id: string;
-  name: string;
-  price: number;
-  image: string;
-  shortDescription: string;
-};
+import type { ProductListItem } from "@/types/product";
 
 export default async function HomePage() {
-  const products: Product[] = await getProducts();
+  const products: ProductListItem[] = await getProducts();
 
   return (
     <main className="min-h-screen bg-background px-6 py-10">

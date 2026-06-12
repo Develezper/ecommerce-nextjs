@@ -1,15 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
-
-export type CreateProductInput = {
-  name: string;
-  price: number;
-  image: string;
-  shortDescription: string;
-  description: string;
-  specifications: string[];
-  stock: number;
-};
+import type { CreateProductInput } from "@/types/product";
 
 export async function getProducts() {
   await connectDB();
