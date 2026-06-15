@@ -23,13 +23,13 @@ export default async function ProductDetailPage({
   if (!product) {
     notFound();
   }
-  
+
   const formattedPrice = formatCurrencyCOP(product.price);
 
   return (
     <main className="min-h-screen bg-background px-6 py-10">
       <section className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
-        <div className="relative h-[450px] overflow-hidden rounded-2xl border">
+        <div className="relative h-112.5 overflow-hidden rounded-2xl border">
           <Image
             src={product.image}
             alt={product.name}
