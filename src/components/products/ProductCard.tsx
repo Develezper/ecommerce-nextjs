@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import { formatCurrencyCOP } from "@/lib/formatters";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,11 +31,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const formattedPrice = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    maximumFractionDigits: 0,
-  }).format(price);
+  const formattedPrice = formatCurrencyCOP(price);
 
   return (
     <Card className="group overflow-hidden rounded-2xl border shadow-sm transition hover:shadow-md">
