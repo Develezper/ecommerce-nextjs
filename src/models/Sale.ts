@@ -1,31 +1,74 @@
-import { Schema, models, model, Types } from "mongoose";
+import { Schema, Types, model, models } from "mongoose";
 
-export type FavoriteDocument = {
-  userId: Types.ObjectId;
+export type SaleProductSnapshotDocument = {
   productId: Types.ObjectId;
+  name: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
 };
 
-const favoriteSchema = new Schema<FavoriteDocument>(
+export type SaleDocument = {
+  userId: Types.ObjectId;
+  products: SaleProductSnapshotDocument[];
+  total: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const saleProductSnapshotSchema = new Schema<SaleProductSnapshotDocument>(
+  {
+    productId: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    subtotal: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  {
+    _id: false,
+  }
+);
+
+const saleSchema = new Schema<SaleDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: "Product",
+    products: {
+      type: [saleProductSnapshotSchema],
+      default: [],
+    },
+    total: {
+      type: Number,
       required: true,
+      min: 0,
     },
   },
   {
     timestamps: true,
-    collection: "favorites",
+    collection: "sales",
   }
 );
 
-favoriteSchema.index({ userId: 1, productId: 1 }, { unique: true });
-
-export const Favorite =
-  models.Favorite || model<FavoriteDocument>("Favorite", favoriteSchema);
+export const Sale = models.Sale || model<SaleDocument>("Sale", saleSchema);

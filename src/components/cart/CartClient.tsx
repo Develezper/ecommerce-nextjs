@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrencyCOP } from "@/lib/formatters";
 import { api } from "@/lib/api";
 import type { CartApiResponse, CartResponse } from "@/types/cart";
+import type { CheckoutSaleApiResponse } from "@/types/sale";
 
 type CartClientProps = {
   initialCart: CartResponse;
@@ -19,6 +20,13 @@ type CartClientProps = {
 type CartErrorResponse = {
   message?: string;
 };
+
+type FeedbackState =
+  | {
+      type: "success" | "error";
+      text: string;
+    }
+  | null;
 
 function getCartState(data: CartApiResponse): CartResponse {
   return {
@@ -39,20 +47,21 @@ export default function CartClient({ initialCart }: CartClientProps) {
   const router = useRouter();
 
   const [cart, setCart] = useState<CartResponse>(initialCart);
-  const [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [pendingProductId, setPendingProductId] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<"update" | "remove" | null>(
     null
   );
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   async function handleQuantityChange(productId: string, quantity: number) {
-    if (pendingProductId || quantity < 1) {
+    if (pendingProductId || isCheckingOut || quantity < 1) {
       return;
     }
 
     setPendingProductId(productId);
     setPendingAction("update");
-    setMessage("");
+    setFeedback(null);
 
     try {
       const response = await api.patch<CartApiResponse>(`/cart/${productId}`, {
@@ -66,7 +75,10 @@ export default function CartClient({ initialCart }: CartClientProps) {
         return;
       }
 
-      setMessage(getErrorMessage(error, "No se pudo actualizar el carrito"));
+      setFeedback({
+        type: "error",
+        text: getErrorMessage(error, "No se pudo actualizar el carrito"),
+      });
     } finally {
       setPendingProductId(null);
       setPendingAction(null);
@@ -74,13 +86,13 @@ export default function CartClient({ initialCart }: CartClientProps) {
   }
 
   async function handleRemoveProduct(productId: string) {
-    if (pendingProductId) {
+    if (pendingProductId || isCheckingOut) {
       return;
     }
 
     setPendingProductId(productId);
     setPendingAction("remove");
-    setMessage("");
+    setFeedback(null);
 
     try {
       const response = await api.delete<CartApiResponse>(`/cart/${productId}`);
@@ -92,17 +104,68 @@ export default function CartClient({ initialCart }: CartClientProps) {
         return;
       }
 
-      setMessage(getErrorMessage(error, "No se pudo eliminar el producto"));
+      setFeedback({
+        type: "error",
+        text: getErrorMessage(error, "No se pudo eliminar el producto"),
+      });
     } finally {
       setPendingProductId(null);
       setPendingAction(null);
     }
   }
 
+  async function handleCheckout() {
+    if (pendingProductId || isCheckingOut || cart.products.length === 0) {
+      return;
+    }
+
+    setIsCheckingOut(true);
+    setFeedback(null);
+
+    try {
+      const response = await api.post<CheckoutSaleApiResponse>("/sales/checkout");
+
+      setCart({
+        products: [],
+        total: 0,
+      });
+      setFeedback({
+        type: "success",
+        text: response.data.message,
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        router.push("/login");
+        return;
+      }
+
+      setFeedback({
+        type: "error",
+        text: getErrorMessage(error, "No se pudo completar la compra"),
+      });
+    } finally {
+      setIsCheckingOut(false);
+    }
+  }
+
+  const feedbackContent = feedback ? (
+    <p
+      className={`rounded-xl px-4 py-3 text-sm ${
+        feedback.type === "success"
+          ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+          : "border border-destructive/20 bg-destructive/5 text-destructive"
+      }`}
+    >
+      {feedback.text}
+    </p>
+  ) : null;
+
   if (cart.products.length === 0) {
     return (
       <Card className="border shadow-sm">
         <CardContent className="py-10 text-center">
+          {feedbackContent ? <div className="mb-6">{feedbackContent}</div> : null}
+
           <p className="text-lg font-semibold">Tu carrito está vacío.</p>
           <p className="mt-2 text-muted-foreground">
             Agrega productos desde el detalle para verlos aquí.
@@ -119,15 +182,11 @@ export default function CartClient({ initialCart }: CartClientProps) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="space-y-4">
-        {message ? (
-          <p className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-            {message}
-          </p>
-        ) : null}
+        {feedbackContent}
 
         {cart.products.map((product) => {
           const isCurrentProduct = pendingProductId === product._id;
-          const isBusy = pendingProductId !== null;
+          const isBusy = pendingProductId !== null || isCheckingOut;
 
           return (
             <Card key={product._id} className="border shadow-sm">
@@ -248,6 +307,15 @@ export default function CartClient({ initialCart }: CartClientProps) {
           <p className="text-sm text-muted-foreground">
             Ajusta cantidades o elimina productos antes de continuar.
           </p>
+
+          <Button
+            type="button"
+            className="w-full"
+            onClick={handleCheckout}
+            disabled={isCheckingOut || pendingProductId !== null}
+          >
+            {isCheckingOut ? "Procesando compra..." : "Finalizar compra"}
+          </Button>
         </CardContent>
       </Card>
     </div>
