@@ -15,6 +15,25 @@ export type SaleResponse = {
   updatedAt: string;
 };
 
+export type CurrentMonthSaleSummary = {
+  saleId: string;
+  createdAt: string;
+  total: number;
+  productsCount: number;
+  unitsSold: number;
+};
+
+export type CurrentMonthSalesReport = {
+  year: number;
+  month: number;
+  periodStart: string;
+  periodEnd: string;
+  totalSales: number;
+  orderCount: number;
+  totalProductsSold: number;
+  sales: CurrentMonthSaleSummary[];
+};
+
 export type CheckoutSaleApiResponse = {
   ok: boolean;
   message: string;
