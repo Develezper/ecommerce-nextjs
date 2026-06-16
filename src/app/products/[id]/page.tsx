@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import AddToCartButton from "@/components/cart/AddToCartButton";
 import { Button } from "@/components/ui/button";
 import { getProductById } from "@/services/product.service";
 import type { ProductDetail } from "@/types/product";
@@ -70,7 +71,7 @@ export default async function ProductDetailPage({
           </div>
 
           <div className="flex gap-4">
-            <Button>Agregar al carrito</Button>
+            <AddToCartButton productId={product._id} />
 
             <Button variant="outline" asChild>
               <Link href="/">Volver</Link>

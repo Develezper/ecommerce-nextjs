@@ -3,22 +3,9 @@ import { Types } from "mongoose";
 import { connectDB } from "@/lib/mongodb";
 import { Cart } from "@/models/Cart";
 import { Product } from "@/models/Product";
+import type { CartProduct, CartResponse } from "@/types/cart";
 
-export type CartItemResponse = {
-  _id: string;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-  subtotal: number;
-};
-
-export type CartResponse = {
-  products: CartItemResponse[];
-  total: number;
-};
-
-type AggregatedCartItem = CartItemResponse;
+type AggregatedCartItem = CartProduct;
 
 function validateObjectId(id: string, fieldName: string) {
   if (!Types.ObjectId.isValid(id)) {
