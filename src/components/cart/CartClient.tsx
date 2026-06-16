@@ -185,7 +185,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
   if (cart.products.length === 0) {
     return (
-      <Card className="border shadow-sm">
+      <Card className="border border-primary/10 bg-white/78 shadow-[0_24px_80px_-54px_rgb(190_24_93_/_0.48)]">
         <CardContent className="py-10 text-center">
           {feedbackContent ? <div className="mb-6">{feedbackContent}</div> : null}
 
@@ -212,10 +212,13 @@ export default function CartClient({ initialCart }: CartClientProps) {
           const isBusy = pendingProductId !== null || isCheckingOut;
 
           return (
-            <Card key={product._id} className="border shadow-sm">
+            <Card
+              key={product._id}
+              className="border border-primary/10 bg-white/82 shadow-[0_24px_80px_-54px_rgb(190_24_93_/_0.4)]"
+            >
               <CardContent className="p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                  <div className="relative h-28 w-full overflow-hidden rounded-xl border sm:w-28">
+                  <div className="relative h-28 w-full overflow-hidden rounded-2xl border border-primary/10 sm:w-28">
                     <Image
                       src={product.image}
                       alt={product.name}
@@ -241,14 +244,14 @@ export default function CartClient({ initialCart }: CartClientProps) {
                         <p className="text-xs text-muted-foreground">
                           {t("subtotal")}
                         </p>
-                        <p className="text-base font-semibold text-rose-600">
+                        <p className="text-base font-semibold text-primary">
                           {formatCurrencyCOP(product.subtotal)}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                      <div className="flex items-center gap-2 rounded-full border px-2 py-1">
+                      <div className="flex items-center gap-2 rounded-full border border-primary/10 bg-accent/55 px-2 py-1">
                         <Button
                           type="button"
                           variant="outline"
@@ -315,7 +318,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
         })}
       </div>
 
-      <Card className="h-fit border shadow-sm">
+      <Card className="h-fit border border-primary/10 bg-white/82 shadow-[0_24px_80px_-54px_rgb(190_24_93_/_0.4)]">
         <CardHeader>
           <CardTitle>{t("summaryTitle")}</CardTitle>
         </CardHeader>
@@ -328,7 +331,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
           <div className="flex items-center justify-between text-lg font-semibold">
             <span>{t("total")}</span>
-            <span>{formatCurrencyCOP(cart.total)}</span>
+            <span className="text-primary">{formatCurrencyCOP(cart.total)}</span>
           </div>
 
           <p className="text-sm text-muted-foreground">{t("helper")}</p>

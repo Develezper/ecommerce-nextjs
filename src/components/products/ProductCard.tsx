@@ -2,7 +2,7 @@
 import axios from "axios";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,10 @@ export default function ProductCard({
   const [isLoading, setIsLoading] = useState(false);
 
   const formattedPrice = formatCurrencyCOP(price);
+
+  useEffect(() => {
+    setIsFavorite(initialIsFavorite);
+  }, [initialIsFavorite]);
 
   async function handleToggleFavorite() {
     if (isLoading) {
@@ -100,9 +104,7 @@ export default function ProductCard({
       </CardHeader>
 
       <CardContent className="space-y-3 p-5">
-        <div className="inline-flex w-fit rounded-full bg-accent px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-          Beauty Pick
-        </div>
+        <div className="h-1.5 w-14 rounded-full bg-linear-to-r from-primary to-rose-300" />
 
         <h3 className="line-clamp-1 text-lg font-semibold text-foreground">
           {name}
