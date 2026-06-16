@@ -1,14 +1,17 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/i18n/navigation";
 import { api } from "@/lib/api";
 
 export default function RegisterPage() {
+  const t = useTranslations("Register");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,31 +19,40 @@ export default function RegisterPage() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  function translateRegisterMessage(messageText: string | undefined) {
+    switch (messageText) {
+      case "Usuario registrado correctamente":
+        return t("messages.success");
+      case "El correo ya está registrado":
+        return t("messages.emailRegistered");
+      default:
+        return t("messages.unexpected");
+    }
+  }
+
   async function handleRegister() {
     try {
       setIsLoading(true);
       setMessage("");
 
-      const response = await api.post("/auth/register", {
+      const response = await api.post<{ message?: string }>("/auth/register", {
         name,
         email,
         password,
       });
 
-      setMessage(response.data.message);
+      setMessage(translateRegisterMessage(response.data.message));
 
       setName("");
       setEmail("");
       setPassword("");
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setMessage(
-          error.response?.data?.message || "Error al registrar usuario"
-        );
+      if (axios.isAxiosError<{ message?: string }>(error)) {
+        setMessage(translateRegisterMessage(error.response?.data?.message));
         return;
       }
 
-      setMessage("Error inesperado al registrar usuario");
+      setMessage(t("messages.unexpected"));
     } finally {
       setIsLoading(false);
     }
@@ -49,28 +61,28 @@ export default function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-rose-50 px-6">
       <section className="w-full max-w-md rounded-2xl border bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-bold">Crear cuenta</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
 
         <p className="mt-2 text-sm text-muted-foreground">
-          Regístrate para comprar, agregar favoritos y usar el carrito.
+          {t("description")}
         </p>
 
         <div className="mt-6 space-y-4">
           <Input
-            placeholder="Nombre"
+            placeholder={t("namePlaceholder")}
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
 
           <Input
-            placeholder="Correo electrónico"
+            placeholder={t("emailPlaceholder")}
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
 
           <Input
-            placeholder="Contraseña"
+            placeholder={t("passwordPlaceholder")}
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -81,7 +93,7 @@ export default function RegisterPage() {
             onClick={handleRegister}
             disabled={isLoading}
           >
-            {isLoading ? "Registrando..." : "Registrarme"}
+            {isLoading ? t("loading") : t("submit")}
           </Button>
 
           {message && (
@@ -90,9 +102,9 @@ export default function RegisterPage() {
         </div>
 
         <p className="mt-6 text-sm text-muted-foreground">
-          ¿Ya tienes cuenta?{" "}
+          {t("hasAccount")}{" "}
           <Link href="/login" className="font-medium text-rose-600">
-            Inicia sesión
+            {t("login")}
           </Link>
         </p>
       </section>

@@ -1,12 +1,9 @@
 "use client";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Heart } from "lucide-react";
-import { formatCurrencyCOP } from "@/lib/formatters";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +12,9 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { Link, useRouter } from "@/i18n/navigation";
+import { api } from "@/lib/api";
+import { formatCurrencyCOP } from "@/lib/formatters";
 
 type ProductCardProps = {
   id: string;
@@ -42,6 +42,7 @@ export default function ProductCard({
   initialIsFavorite = false,
 }: ProductCardProps) {
   const router = useRouter();
+  const t = useTranslations("ProductCard");
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -90,7 +91,7 @@ export default function ProductCard({
           onClick={handleToggleFavorite}
           disabled={isLoading}
           className="absolute right-3 top-3 rounded-full bg-white p-2 shadow transition hover:scale-105"
-          aria-label="Agregar a favoritos"
+          aria-label={t("favoriteButton")}
         >
           <Heart
             className={`h-5 w-5 ${
@@ -112,7 +113,7 @@ export default function ProductCard({
 
       <CardFooter className="p-4 pt-0">
         <Button asChild className="w-full">
-          <Link href={`/products/${id}`}>Ver detalle</Link>
+          <Link href={`/products/${id}`}>{t("viewDetail")}</Link>
         </Button>
       </CardFooter>
     </Card>

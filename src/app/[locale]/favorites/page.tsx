@@ -1,15 +1,28 @@
-import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import ProductCard from "@/components/products/ProductCard";
+import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/current-user";
 import { getFavoriteProducts } from "@/services/favorite.service";
 import type { ProductListItem } from "@/types/product";
 
-export default async function FavoritesPage() {
+type FavoritesPageProps = {
+  params: Promise<{
+    locale: string;
+  }>;
+};
+
+export default async function FavoritesPage({ params }: FavoritesPageProps) {
+  const { locale } = await params;
+
+  setRequestLocale(locale);
+
+  const t = await getTranslations({ locale, namespace: "Favorites" });
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/login");
+    redirect({ href: "/login", locale });
+    return null;
   }
 
   const favoriteProducts: ProductListItem[] = await getFavoriteProducts(
@@ -20,19 +33,19 @@ export default async function FavoritesPage() {
     <main className="min-h-screen bg-background px-6 py-10">
       <section className="mx-auto max-w-7xl">
         <div className="mb-8">
-          <p className="text-sm font-medium text-rose-600">Tu selección</p>
+          <p className="text-sm font-medium text-rose-600">{t("eyebrow")}</p>
 
-          <h1 className="mt-2 text-3xl font-bold tracking-tight">Favoritos</h1>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight">
+            {t("title")}
+          </h1>
 
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Revisa los productos que guardaste para verlos más tarde.
+            {t("description")}
           </p>
         </div>
 
         {favoriteProducts.length === 0 ? (
-          <p className="text-muted-foreground">
-            Aún no tienes productos favoritos.
-          </p>
+          <p className="text-muted-foreground">{t("empty")}</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {favoriteProducts.map((product) => (

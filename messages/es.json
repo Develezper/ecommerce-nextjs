@@ -1,0 +1,111 @@
+{
+  "Navbar": {
+    "brand": "Beauty Store",
+    "products": "Productos",
+    "favorites": "Favoritos",
+    "cart": "Carrito",
+    "login": "Iniciar sesión",
+    "register": "Crear cuenta",
+    "greeting": "Hola, {name}"
+  },
+  "LocaleSwitcher": {
+    "label": "Idioma",
+    "es": "ES",
+    "en": "EN",
+    "pt": "PT"
+  },
+  "LogoutButton": {
+    "idle": "Cerrar sesión",
+    "loading": "Cerrando..."
+  },
+  "Home": {
+    "eyebrow": "Belleza y cuidado personal",
+    "title": "Productos destacados",
+    "description": "Explora nuestra selección de productos de belleza, cuidado facial y fragancias.",
+    "empty": "No hay productos disponibles."
+  },
+  "ProductCard": {
+    "favoriteButton": "Agregar a favoritos",
+    "viewDetail": "Ver detalle"
+  },
+  "ProductDetail": {
+    "eyebrow": "Detalle del producto",
+    "specifications": "Especificaciones",
+    "stockTitle": "Stock disponible",
+    "stockUnits": "{count} unidades",
+    "back": "Volver"
+  },
+  "AddToCartButton": {
+    "idle": "Agregar al carrito",
+    "loading": "Agregando...",
+    "added": "Agregado"
+  },
+  "Login": {
+    "title": "Iniciar sesión",
+    "description": "Ingresa para comprar, agregar favoritos y usar el carrito.",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "submit": "Ingresar",
+    "loading": "Ingresando...",
+    "noAccount": "¿No tienes cuenta?",
+    "register": "Regístrate",
+    "messages": {
+      "success": "Inicio de sesión correcto.",
+      "invalidCredentials": "Credenciales inválidas.",
+      "unexpected": "Error inesperado al iniciar sesión."
+    }
+  },
+  "Register": {
+    "title": "Crear cuenta",
+    "description": "Regístrate para comprar, agregar favoritos y usar el carrito.",
+    "namePlaceholder": "Nombre",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "submit": "Registrarme",
+    "loading": "Registrando...",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "login": "Inicia sesión",
+    "messages": {
+      "success": "Usuario registrado correctamente.",
+      "emailRegistered": "El correo ya está registrado.",
+      "unexpected": "Error inesperado al registrar usuario."
+    }
+  },
+  "Favorites": {
+    "eyebrow": "Tu selección",
+    "title": "Favoritos",
+    "description": "Revisa los productos que guardaste para verlos más tarde.",
+    "empty": "Aún no tienes productos favoritos."
+  },
+  "Cart": {
+    "eyebrow": "Tu compra",
+    "title": "Carrito",
+    "description": "Revisa cantidades, subtotales y el total antes de continuar.",
+    "emptyTitle": "Tu carrito está vacío.",
+    "emptyDescription": "Agrega productos desde el detalle para verlos aquí.",
+    "viewProducts": "Ver productos",
+    "price": "Precio",
+    "subtotal": "Subtotal",
+    "decreaseQuantity": "Disminuir cantidad de {name}",
+    "increaseQuantity": "Aumentar cantidad de {name}",
+    "remove": "Eliminar",
+    "removing": "Eliminando...",
+    "updating": "Actualizando...",
+    "summaryTitle": "Resumen del carrito",
+    "products": "Productos",
+    "total": "Total",
+    "helper": "Ajusta cantidades o elimina productos antes de continuar.",
+    "checkout": "Finalizar compra",
+    "processing": "Procesando compra...",
+    "feedback": {
+      "updateError": "No se pudo actualizar el carrito.",
+      "removeError": "No se pudo eliminar el producto.",
+      "checkoutError": "No se pudo completar la compra.",
+      "checkoutSuccess": "Compra realizada con éxito.",
+      "emptyCartError": "El carrito está vacío.",
+      "invalidQuantity": "La cantidad debe ser mayor a 0.",
+      "productNotFound": "Producto no encontrado en el carrito.",
+      "authRequired": "Debes iniciar sesión."
+    }
+  }
+}

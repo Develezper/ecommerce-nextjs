@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
+import { getLocale } from "next-intl/server";
 
-import Navbar from "@/components/layout/Navbar";
 import { cn } from "@/lib/utils";
 
 import "./globals.css";
@@ -27,14 +27,16 @@ export const metadata: Metadata = {
     "Full-stack E-commerce simulator built with Next.js, 3-language i18n (EN/ES/PT), automated transactional emails, and a daily sales report cron job.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="es"
+      lang={locale}
       className={cn(
         "h-full",
         "antialiased",
@@ -44,10 +46,7 @@ export default function RootLayout({
         "font-sans"
       )}
     >
-      <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

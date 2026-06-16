@@ -2,12 +2,12 @@
 
 import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link, useRouter } from "@/i18n/navigation";
 import { formatCurrencyCOP } from "@/lib/formatters";
 import { api } from "@/lib/api";
 import type { CartApiResponse, CartResponse } from "@/types/cart";
@@ -35,16 +35,9 @@ function getCartState(data: CartApiResponse): CartResponse {
   };
 }
 
-function getErrorMessage(error: unknown, fallbackMessage: string) {
-  if (axios.isAxiosError<CartErrorResponse>(error)) {
-    return error.response?.data?.message ?? fallbackMessage;
-  }
-
-  return fallbackMessage;
-}
-
 export default function CartClient({ initialCart }: CartClientProps) {
   const router = useRouter();
+  const t = useTranslations("Cart");
 
   const [cart, setCart] = useState<CartResponse>(initialCart);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
@@ -53,6 +46,33 @@ export default function CartClient({ initialCart }: CartClientProps) {
     null
   );
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  function translateCartMessage(
+    message: string | undefined,
+    fallbackMessage: string
+  ) {
+    switch (message) {
+      case "Debes iniciar sesión":
+        return t("feedback.authRequired");
+      case "El carrito está vacío":
+        return t("feedback.emptyCartError");
+      case "La cantidad debe ser mayor a 0":
+        return t("feedback.invalidQuantity");
+      case "Producto no encontrado":
+      case "Producto no encontrado en el carrito":
+        return t("feedback.productNotFound");
+      default:
+        return fallbackMessage;
+    }
+  }
+
+  function getErrorMessage(error: unknown, fallbackMessage: string) {
+    if (axios.isAxiosError<CartErrorResponse>(error)) {
+      return translateCartMessage(error.response?.data?.message, fallbackMessage);
+    }
+
+    return fallbackMessage;
+  }
 
   async function handleQuantityChange(productId: string, quantity: number) {
     if (pendingProductId || isCheckingOut || quantity < 1) {
@@ -77,7 +97,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
       setFeedback({
         type: "error",
-        text: getErrorMessage(error, "No se pudo actualizar el carrito"),
+        text: getErrorMessage(error, t("feedback.updateError")),
       });
     } finally {
       setPendingProductId(null);
@@ -106,7 +126,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
       setFeedback({
         type: "error",
-        text: getErrorMessage(error, "No se pudo eliminar el producto"),
+        text: getErrorMessage(error, t("feedback.removeError")),
       });
     } finally {
       setPendingProductId(null);
@@ -131,7 +151,10 @@ export default function CartClient({ initialCart }: CartClientProps) {
       });
       setFeedback({
         type: "success",
-        text: response.data.message,
+        text: translateCartMessage(
+          response.data.message,
+          t("feedback.checkoutSuccess")
+        ),
       });
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -141,7 +164,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
       setFeedback({
         type: "error",
-        text: getErrorMessage(error, "No se pudo completar la compra"),
+        text: getErrorMessage(error, t("feedback.checkoutError")),
       });
     } finally {
       setIsCheckingOut(false);
@@ -166,13 +189,13 @@ export default function CartClient({ initialCart }: CartClientProps) {
         <CardContent className="py-10 text-center">
           {feedbackContent ? <div className="mb-6">{feedbackContent}</div> : null}
 
-          <p className="text-lg font-semibold">Tu carrito está vacío.</p>
+          <p className="text-lg font-semibold">{t("emptyTitle")}</p>
           <p className="mt-2 text-muted-foreground">
-            Agrega productos desde el detalle para verlos aquí.
+            {t("emptyDescription")}
           </p>
 
           <Button asChild className="mt-6">
-            <Link href="/">Ver productos</Link>
+            <Link href="/">{t("viewProducts")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -210,13 +233,13 @@ export default function CartClient({ initialCart }: CartClientProps) {
                         </h2>
 
                         <p className="text-sm text-muted-foreground">
-                          Precio: {formatCurrencyCOP(product.price)}
+                          {t("price")}: {formatCurrencyCOP(product.price)}
                         </p>
                       </div>
 
                       <div className="text-left sm:text-right">
                         <p className="text-xs text-muted-foreground">
-                          Subtotal
+                          {t("subtotal")}
                         </p>
                         <p className="text-base font-semibold text-rose-600">
                           {formatCurrencyCOP(product.subtotal)}
@@ -237,7 +260,9 @@ export default function CartClient({ initialCart }: CartClientProps) {
                             )
                           }
                           disabled={isBusy || product.quantity === 1}
-                          aria-label={`Disminuir cantidad de ${product.name}`}
+                          aria-label={t("decreaseQuantity", {
+                            name: product.name,
+                          })}
                         >
                           -
                         </Button>
@@ -257,7 +282,9 @@ export default function CartClient({ initialCart }: CartClientProps) {
                             )
                           }
                           disabled={isBusy}
-                          aria-label={`Aumentar cantidad de ${product.name}`}
+                          aria-label={t("increaseQuantity", {
+                            name: product.name,
+                          })}
                         >
                           +
                         </Button>
@@ -270,13 +297,13 @@ export default function CartClient({ initialCart }: CartClientProps) {
                         disabled={isBusy}
                       >
                         {isCurrentProduct && pendingAction === "remove"
-                          ? "Eliminando..."
-                          : "Eliminar"}
+                          ? t("removing")
+                          : t("remove")}
                       </Button>
 
                       {isCurrentProduct && pendingAction === "update" ? (
                         <p className="text-sm text-muted-foreground">
-                          Actualizando...
+                          {t("updating")}
                         </p>
                       ) : null}
                     </div>
@@ -290,23 +317,21 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
       <Card className="h-fit border shadow-sm">
         <CardHeader>
-          <CardTitle>Resumen del carrito</CardTitle>
+          <CardTitle>{t("summaryTitle")}</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Productos</span>
+            <span>{t("products")}</span>
             <span>{cart.products.length}</span>
           </div>
 
           <div className="flex items-center justify-between text-lg font-semibold">
-            <span>Total</span>
+            <span>{t("total")}</span>
             <span>{formatCurrencyCOP(cart.total)}</span>
           </div>
 
-          <p className="text-sm text-muted-foreground">
-            Ajusta cantidades o elimina productos antes de continuar.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("helper")}</p>
 
           <Button
             type="button"
@@ -314,7 +339,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
             onClick={handleCheckout}
             disabled={isCheckingOut || pendingProductId !== null}
           >
-            {isCheckingOut ? "Procesando compra..." : "Finalizar compra"}
+            {isCheckingOut ? t("processing") : t("checkout")}
           </Button>
         </CardContent>
       </Card>

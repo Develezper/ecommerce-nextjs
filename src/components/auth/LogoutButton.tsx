@@ -1,10 +1,11 @@
 "use client";
 
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useRouter } from "@/i18n/navigation";
 import { api } from "@/lib/api";
 
 type LogoutResponse = {
@@ -13,6 +14,7 @@ type LogoutResponse = {
 
 export default function LogoutButton() {
   const router = useRouter();
+  const t = useTranslations("LogoutButton");
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleLogout() {
@@ -38,7 +40,7 @@ export default function LogoutButton() {
 
   return (
     <Button variant="outline" onClick={handleLogout} disabled={isLoading}>
-      {isLoading ? "Cerrando..." : "Cerrar sesión"}
+      {isLoading ? t("loading") : t("idle")}
     </Button>
   );
 }

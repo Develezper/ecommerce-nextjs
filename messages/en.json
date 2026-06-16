@@ -1,0 +1,111 @@
+{
+  "Navbar": {
+    "brand": "Beauty Store",
+    "products": "Products",
+    "favorites": "Favorites",
+    "cart": "Cart",
+    "login": "Log in",
+    "register": "Create account",
+    "greeting": "Hi, {name}"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "es": "ES",
+    "en": "EN",
+    "pt": "PT"
+  },
+  "LogoutButton": {
+    "idle": "Log out",
+    "loading": "Logging out..."
+  },
+  "Home": {
+    "eyebrow": "Beauty and personal care",
+    "title": "Featured products",
+    "description": "Explore our curated selection of beauty, skincare and fragrance products.",
+    "empty": "No products available."
+  },
+  "ProductCard": {
+    "favoriteButton": "Add to favorites",
+    "viewDetail": "View details"
+  },
+  "ProductDetail": {
+    "eyebrow": "Product details",
+    "specifications": "Specifications",
+    "stockTitle": "Available stock",
+    "stockUnits": "{count} units",
+    "back": "Back"
+  },
+  "AddToCartButton": {
+    "idle": "Add to cart",
+    "loading": "Adding...",
+    "added": "Added"
+  },
+  "Login": {
+    "title": "Log in",
+    "description": "Sign in to shop, save favorites and use the cart.",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "submit": "Log in",
+    "loading": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "register": "Sign up",
+    "messages": {
+      "success": "Signed in successfully.",
+      "invalidCredentials": "Invalid credentials.",
+      "unexpected": "Unexpected sign-in error."
+    }
+  },
+  "Register": {
+    "title": "Create account",
+    "description": "Sign up to shop, save favorites and use the cart.",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "submit": "Sign up",
+    "loading": "Creating account...",
+    "hasAccount": "Already have an account?",
+    "login": "Log in",
+    "messages": {
+      "success": "User registered successfully.",
+      "emailRegistered": "This email is already registered.",
+      "unexpected": "Unexpected registration error."
+    }
+  },
+  "Favorites": {
+    "eyebrow": "Your picks",
+    "title": "Favorites",
+    "description": "Review the products you saved to revisit later.",
+    "empty": "You don't have favorite products yet."
+  },
+  "Cart": {
+    "eyebrow": "Your order",
+    "title": "Cart",
+    "description": "Review quantities, subtotals and the total before continuing.",
+    "emptyTitle": "Your cart is empty.",
+    "emptyDescription": "Add products from the detail page to see them here.",
+    "viewProducts": "Browse products",
+    "price": "Price",
+    "subtotal": "Subtotal",
+    "decreaseQuantity": "Decrease quantity for {name}",
+    "increaseQuantity": "Increase quantity for {name}",
+    "remove": "Remove",
+    "removing": "Removing...",
+    "updating": "Updating...",
+    "summaryTitle": "Cart summary",
+    "products": "Products",
+    "total": "Total",
+    "helper": "Adjust quantities or remove products before continuing.",
+    "checkout": "Complete purchase",
+    "processing": "Processing purchase...",
+    "feedback": {
+      "updateError": "Couldn't update the cart.",
+      "removeError": "Couldn't remove the product.",
+      "checkoutError": "Couldn't complete the purchase.",
+      "checkoutSuccess": "Purchase completed successfully.",
+      "emptyCartError": "The cart is empty.",
+      "invalidQuantity": "Quantity must be greater than 0.",
+      "productNotFound": "Product not found in the cart.",
+      "authRequired": "You need to log in."
+    }
+  }
+}

@@ -1,10 +1,11 @@
 "use client";
 
 import axios from "axios";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { useRouter } from "@/i18n/navigation";
 import { api } from "@/lib/api";
 import type { CartApiResponse } from "@/types/cart";
 
@@ -16,6 +17,7 @@ export default function AddToCartButton({
   productId,
 }: AddToCartButtonProps) {
   const router = useRouter();
+  const t = useTranslations("AddToCartButton");
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
@@ -59,10 +61,10 @@ export default function AddToCartButton({
   }
 
   const buttonText = isLoading
-    ? "Agregando..."
+    ? t("loading")
     : isAdded
-      ? "Agregado"
-      : "Agregar al carrito";
+      ? t("added")
+      : t("idle");
 
   return (
     <Button onClick={handleAddToCart} disabled={isLoading}>

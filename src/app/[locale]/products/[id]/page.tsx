@@ -1,15 +1,17 @@
 import Image from "next/image";
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
+import { formatCurrencyCOP } from "@/lib/formatters";
 import { getProductById } from "@/services/product.service";
 import type { ProductDetail } from "@/types/product";
-import { formatCurrencyCOP } from "@/lib/formatters";
 
 type ProductDetailPageProps = {
   params: Promise<{
+    locale: string;
     id: string;
   }>;
 };
@@ -17,8 +19,11 @@ type ProductDetailPageProps = {
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
-  const { id } = await params;
+  const { locale, id } = await params;
 
+  setRequestLocale(locale);
+
+  const t = await getTranslations({ locale, namespace: "ProductDetail" });
   const product: ProductDetail | null = await getProductById(id);
 
   if (!product) {
@@ -42,9 +47,7 @@ export default async function ProductDetailPage({
 
         <div className="space-y-6">
           <div>
-            <p className="text-sm font-medium text-rose-600">
-              Detalle del producto
-            </p>
+            <p className="text-sm font-medium text-rose-600">{t("eyebrow")}</p>
 
             <h1 className="mt-2 text-3xl font-bold">{product.name}</h1>
 
@@ -56,7 +59,9 @@ export default async function ProductDetailPage({
           <p className="text-muted-foreground">{product.description}</p>
 
           <div>
-            <h2 className="mb-3 text-lg font-semibold">Especificaciones</h2>
+            <h2 className="mb-3 text-lg font-semibold">
+              {t("specifications")}
+            </h2>
 
             <ul className="list-inside list-disc space-y-1 text-muted-foreground">
               {product.specifications.map((specification) => (
@@ -66,15 +71,17 @@ export default async function ProductDetailPage({
           </div>
 
           <div className="rounded-xl border p-4">
-            <p className="font-medium">Stock disponible</p>
-            <p className="text-muted-foreground">{product.stock} unidades</p>
+            <p className="font-medium">{t("stockTitle")}</p>
+            <p className="text-muted-foreground">
+              {t("stockUnits", { count: product.stock })}
+            </p>
           </div>
 
           <div className="flex gap-4">
             <AddToCartButton productId={product._id} />
 
             <Button variant="outline" asChild>
-              <Link href="/">Volver</Link>
+              <Link href="/">{t("back")}</Link>
             </Button>
           </div>
         </div>
