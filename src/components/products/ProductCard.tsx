@@ -63,10 +63,7 @@ export default function ProductCard({
       const nextIsFavorite = response.data.favorite.isFavorite;
 
       setIsFavorite(nextIsFavorite);
-
-      if (initialIsFavorite && !nextIsFavorite) {
-        router.refresh();
-      }
+      router.refresh();
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         router.push("/login");

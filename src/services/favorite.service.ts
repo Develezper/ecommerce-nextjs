@@ -60,6 +60,19 @@ export async function getFavoriteProducts(
   return products;
 }
 
+export async function getFavoriteProductIds(userId: string): Promise<string[]> {
+  await connectDB();
+
+  validateObjectId(userId, "Usuario");
+
+  const favorites = await Favorite.find(
+    { userId },
+    { productId: 1, _id: 0 }
+  ).lean();
+
+  return favorites.map((favorite) => favorite.productId.toString());
+}
+
 export async function toggleFavorite(userId: string, productId: string) {
   await connectDB();
 

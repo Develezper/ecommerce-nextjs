@@ -1,6 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import ProductCard from "@/components/products/ProductCard";
+import type { AppLocale } from "@/i18n/routing";
+import { localizeProductListItem } from "@/lib/product-localization";
+import { getCurrentUser } from "@/lib/current-user";
+import { getFavoriteProductIds } from "@/services/favorite.service";
 import { getProducts } from "@/services/product.service";
 import type { ProductListItem } from "@/types/product";
 
@@ -12,11 +16,20 @@ type HomePageProps = {
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
+  const activeLocale = locale as AppLocale;
 
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: "Home" });
-  const products: ProductListItem[] = await getProducts();
+  const user = await getCurrentUser();
+  const [products, favoriteProductIds] = await Promise.all([
+    getProducts(),
+    user ? getFavoriteProductIds(user.userId) : Promise.resolve([]),
+  ]);
+  const favoriteProductIdSet = new Set(favoriteProductIds);
+  const localizedProducts: ProductListItem[] = products.map((product) =>
+    localizeProductListItem(product, activeLocale)
+  );
 
   return (
     <main className="min-h-screen bg-background px-6 py-10">
@@ -33,18 +46,21 @@ export default async function HomePage({ params }: HomePageProps) {
           </p>
         </div>
 
-        {products.length === 0 ? (
+        {localizedProducts.length === 0 ? (
           <p className="text-muted-foreground">{t("empty")}</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product) => (
+            {localizedProducts.map((product) => (
               <ProductCard
-                key={product._id}
+                key={`${product._id}-${activeLocale}-${favoriteProductIdSet.has(
+                  product._id
+                )}`}
                 id={product._id}
                 name={product.name}
                 price={product.price}
                 image={product.image}
                 shortDescription={product.shortDescription}
+                initialIsFavorite={favoriteProductIdSet.has(product._id)}
               />
             ))}
           </div>

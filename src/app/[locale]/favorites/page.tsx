@@ -1,8 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import ProductCard from "@/components/products/ProductCard";
+import type { AppLocale } from "@/i18n/routing";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/current-user";
+import { localizeProductListItem } from "@/lib/product-localization";
 import { getFavoriteProducts } from "@/services/favorite.service";
 import type { ProductListItem } from "@/types/product";
 
@@ -14,6 +16,7 @@ type FavoritesPageProps = {
 
 export default async function FavoritesPage({ params }: FavoritesPageProps) {
   const { locale } = await params;
+  const activeLocale = locale as AppLocale;
 
   setRequestLocale(locale);
 
@@ -25,9 +28,9 @@ export default async function FavoritesPage({ params }: FavoritesPageProps) {
     return null;
   }
 
-  const favoriteProducts: ProductListItem[] = await getFavoriteProducts(
-    user.userId
-  );
+  const favoriteProducts: ProductListItem[] = (
+    await getFavoriteProducts(user.userId)
+  ).map((product) => localizeProductListItem(product, activeLocale));
 
   return (
     <main className="min-h-screen bg-background px-6 py-10">
@@ -50,7 +53,7 @@ export default async function FavoritesPage({ params }: FavoritesPageProps) {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {favoriteProducts.map((product) => (
               <ProductCard
-                key={product._id}
+                key={`${product._id}-${activeLocale}`}
                 id={product._id}
                 name={product.name}
                 price={product.price}

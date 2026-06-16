@@ -2,6 +2,13 @@ import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
 import { connectDB } from "@/lib/mongodb";
+import {
+  isValidEmail,
+  MIN_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  normalizeEmail,
+  normalizeName,
+} from "@/lib/auth-validation";
 import { User } from "@/models/User";
 import { sendWelcomeEmail } from "@/services/mail.service";
 import type {
@@ -11,12 +18,58 @@ import type {
   RegisterInput,
 } from "@/types/auth";
 
+function validateRegisterData(data: RegisterInput) {
+  const name = normalizeName(data.name);
+  const email = normalizeEmail(data.email);
+  const password = data.password.trim();
+
+  if (!name || !email || !password) {
+    throw new Error("Debes completar todos los campos");
+  }
+
+  if (name.length < MIN_NAME_LENGTH) {
+    throw new Error("El nombre debe tener al menos 2 caracteres");
+  }
+
+  if (!isValidEmail(email)) {
+    throw new Error("Ingresa un correo válido");
+  }
+
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    throw new Error("La contraseña debe tener al menos 8 caracteres");
+  }
+
+  return {
+    email,
+    name,
+    password,
+  };
+}
+
+function validateLoginData(data: LoginInput) {
+  const email = normalizeEmail(data.email);
+  const password = data.password.trim();
+
+  if (!email || !password) {
+    throw new Error("Debes completar correo y contraseña");
+  }
+
+  if (!isValidEmail(email)) {
+    throw new Error("Ingresa un correo válido");
+  }
+
+  return {
+    email,
+    password,
+  };
+}
+
 export async function registerUser(
   data: RegisterInput
 ): Promise<AuthUserResponse> {
   await connectDB();
 
-  const email = data.email.toLowerCase().trim();
+  const { email, name, password } = validateRegisterData(data);
 
   const existingUser = await User.findOne({ email });
 
@@ -24,10 +77,10 @@ export async function registerUser(
     throw new Error("El correo ya está registrado");
   }
 
-  const passwordHash = await bcrypt.hash(data.password, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
 
   const user = await User.create({
-    name: data.name.trim(),
+    name,
     email,
     passwordHash,
   });
@@ -53,7 +106,7 @@ export async function registerUser(
 export async function loginUser(data: LoginInput): Promise<LoginResponse> {
   await connectDB();
 
-  const email = data.email.toLowerCase().trim();
+  const { email, password } = validateLoginData(data);
 
   const user = await User.findOne({ email });
 
@@ -61,10 +114,7 @@ export async function loginUser(data: LoginInput): Promise<LoginResponse> {
     throw new Error("Credenciales inválidas");
   }
 
-  const isPasswordValid = await bcrypt.compare(
-    data.password,
-    user.passwordHash
-  );
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordValid) {
     throw new Error("Credenciales inválidas");
