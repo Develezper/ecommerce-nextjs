@@ -74,7 +74,7 @@ export default function ProductCard({
   }
 
   return (
-    <Card className="group overflow-hidden rounded-2xl border shadow-sm transition hover:shadow-md">
+    <Card className="group overflow-hidden rounded-[1.75rem] border border-primary/10 bg-linear-to-b from-white via-white to-accent/55 transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_70px_-42px_rgb(190_24_93_/_0.45)]">
       <CardHeader className="relative h-64 p-0">
         <Image
           src={image}
@@ -82,33 +82,40 @@ export default function ProductCard({
           fill
           className="object-cover transition duration-300 group-hover:scale-105"
         />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/10 to-transparent" />
 
         <button
           type="button"
           onClick={handleToggleFavorite}
           disabled={isLoading}
-          className="absolute right-3 top-3 rounded-full bg-white p-2 shadow transition hover:scale-105"
+          className="absolute right-3 top-3 rounded-full border border-white/70 bg-white/90 p-2 text-secondary-foreground shadow-sm backdrop-blur transition hover:scale-105 hover:bg-white"
           aria-label={t("favoriteButton")}
         >
           <Heart
             className={`h-5 w-5 ${
-              isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"
+              isFavorite ? "fill-primary text-primary" : "text-secondary-foreground/70"
             }`}
           />
         </button>
       </CardHeader>
 
-      <CardContent className="space-y-2 p-4">
-        <h3 className="line-clamp-1 text-lg font-semibold">{name}</h3>
+      <CardContent className="space-y-3 p-5">
+        <div className="inline-flex w-fit rounded-full bg-accent px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+          Beauty Pick
+        </div>
+
+        <h3 className="line-clamp-1 text-lg font-semibold text-foreground">
+          {name}
+        </h3>
 
         <p className="line-clamp-2 text-sm text-muted-foreground">
           {shortDescription}
         </p>
 
-        <p className="text-lg font-bold text-rose-600">{formattedPrice}</p>
+        <p className="text-lg font-bold text-primary">{formattedPrice}</p>
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-5 pt-0">
         <Button asChild className="w-full">
           <Link href={`/products/${id}`}>{t("viewDetail")}</Link>
         </Button>

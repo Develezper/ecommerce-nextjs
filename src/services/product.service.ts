@@ -1,8 +1,12 @@
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
-import type { CreateProductInput } from "@/types/product";
+import type {
+  CreateProductInput,
+  ProductDetail,
+  ProductListItem,
+} from "@/types/product";
 
-export async function getProducts() {
+export async function getProducts(): Promise<ProductListItem[]> {
   await connectDB();
 
   const products = await Product.find().sort({ createdAt: -1 }).lean();
@@ -10,7 +14,7 @@ export async function getProducts() {
   return JSON.parse(JSON.stringify(products));
 }
 
-export async function getProductById(id: string) {
+export async function getProductById(id: string): Promise<ProductDetail | null> {
   await connectDB();
 
   const product = await Product.findById(id).lean();

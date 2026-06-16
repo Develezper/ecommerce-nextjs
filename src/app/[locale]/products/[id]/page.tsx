@@ -38,9 +38,9 @@ export default async function ProductDetailPage({
   const formattedPrice = formatCurrencyCOP(localizedProduct.price);
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
+    <main className="min-h-screen px-6 py-10">
       <section className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
-        <div className="relative h-112.5 overflow-hidden rounded-2xl border">
+        <div className="relative h-112.5 overflow-hidden rounded-[2rem] border border-primary/10 bg-white/70 shadow-[0_28px_80px_-48px_rgb(190_24_93_/_0.48)]">
           <Image
             src={localizedProduct.image}
             alt={localizedProduct.name}
@@ -50,13 +50,15 @@ export default async function ProductDetailPage({
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 rounded-[2rem] border border-white/70 bg-white/72 p-8 shadow-[0_22px_80px_-52px_rgb(190_24_93_/_0.45)] backdrop-blur-sm">
           <div>
-            <p className="text-sm font-medium text-rose-600">{t("eyebrow")}</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-primary">
+              {t("eyebrow")}
+            </p>
 
             <h1 className="mt-2 text-3xl font-bold">{localizedProduct.name}</h1>
 
-            <p className="mt-4 text-2xl font-bold text-rose-600">
+            <p className="mt-4 text-2xl font-bold text-primary">
               {formattedPrice}
             </p>
           </div>
@@ -75,8 +77,10 @@ export default async function ProductDetailPage({
             </ul>
           </div>
 
-          <div className="rounded-xl border p-4">
-            <p className="font-medium">{t("stockTitle")}</p>
+          <div className="rounded-2xl border border-primary/10 bg-accent/50 p-4">
+            <p className="font-medium text-secondary-foreground">
+              {t("stockTitle")}
+            </p>
             <p className="text-muted-foreground">
               {t("stockUnits", { count: localizedProduct.stock })}
             </p>
