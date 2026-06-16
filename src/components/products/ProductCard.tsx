@@ -1,5 +1,7 @@
 "use client";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -20,6 +22,15 @@ type ProductCardProps = {
   price: number;
   image: string;
   shortDescription: string;
+  initialIsFavorite?: boolean;
+};
+
+type ToggleFavoriteResponse = {
+  ok: boolean;
+  favorite: {
+    productId: string;
+    isFavorite: boolean;
+  };
 };
 
 export default function ProductCard({
@@ -28,10 +39,41 @@ export default function ProductCard({
   price,
   image,
   shortDescription,
+  initialIsFavorite = false,
 }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [isLoading, setIsLoading] = useState(false);
 
   const formattedPrice = formatCurrencyCOP(price);
+
+  async function handleToggleFavorite() {
+    if (isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await api.post<ToggleFavoriteResponse>("/favorites", {
+        productId: id,
+      });
+
+      const nextIsFavorite = response.data.favorite.isFavorite;
+
+      setIsFavorite(nextIsFavorite);
+
+      if (initialIsFavorite && !nextIsFavorite) {
+        router.refresh();
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        router.push("/login");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <Card className="group overflow-hidden rounded-2xl border shadow-sm transition hover:shadow-md">
@@ -45,7 +87,8 @@ export default function ProductCard({
 
         <button
           type="button"
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={handleToggleFavorite}
+          disabled={isLoading}
           className="absolute right-3 top-3 rounded-full bg-white p-2 shadow transition hover:scale-105"
           aria-label="Agregar a favoritos"
         >
