@@ -3,6 +3,7 @@ import { SignJWT } from "jose";
 
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User";
+import { sendWelcomeEmail } from "@/services/mail.service";
 import type {
   AuthUserResponse,
   LoginInput,
@@ -31,11 +32,22 @@ export async function registerUser(
     passwordHash,
   });
 
-  return {
+  const authUser: AuthUserResponse = {
     _id: user._id.toString(),
     name: user.name,
     email: user.email,
   };
+
+  try {
+    await sendWelcomeEmail({
+      to: authUser.email,
+      name: authUser.name,
+    });
+  } catch (error: unknown) {
+    console.error("No se pudo enviar el correo de bienvenida", error);
+  }
+
+  return authUser;
 }
 
 export async function loginUser(data: LoginInput): Promise<LoginResponse> {
