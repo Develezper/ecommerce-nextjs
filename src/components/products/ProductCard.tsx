@@ -2,7 +2,7 @@
 import axios from "axios";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,10 +47,6 @@ export default function ProductCard({
   const [isLoading, setIsLoading] = useState(false);
 
   const formattedPrice = formatCurrencyCOP(price);
-
-  useEffect(() => {
-    setIsFavorite(initialIsFavorite);
-  }, [initialIsFavorite]);
 
   async function handleToggleFavorite() {
     if (isLoading) {
