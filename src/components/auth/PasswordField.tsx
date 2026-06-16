@@ -1,16 +1,14 @@
 "use client";
 
 import { Eye, EyeOff } from "lucide-react";
+import type { ComponentProps } from "react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-type PasswordFieldProps = Omit<
-  React.ComponentProps<typeof Input>,
-  "type" | "children"
-> & {
+type PasswordFieldProps = Omit<ComponentProps<typeof Input>, "type" | "children"> & {
   hideLabel: string;
   label: string;
   showLabel: string;
