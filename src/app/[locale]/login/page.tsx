@@ -41,9 +41,14 @@ export default function LoginPage() {
       return;
     }
 
-    setMessage(t("messages.registerSuccess"));
-    setMessageTone("success");
     window.sessionStorage.removeItem(AUTH_FEEDBACK_STORAGE_KEY);
+
+    const timeoutId = window.setTimeout(() => {
+      setMessage(t("messages.registerSuccess"));
+      setMessageTone("success");
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [t]);
 
   function translateLoginMessage(messageText: string | undefined) {
