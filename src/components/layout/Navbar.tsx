@@ -33,6 +33,14 @@ export default async function Navbar() {
           >
             {t("products")}
           </Link>
+          {user?.role === "admin" ? (
+            <Link
+              href="/admin/products/create"
+              className="text-sm font-medium text-secondary-foreground transition hover:text-primary"
+            >
+              Admin
+            </Link>
+          ) : null}
           <Link
             href="/favorites"
             className="text-sm font-medium text-secondary-foreground transition hover:text-primary"

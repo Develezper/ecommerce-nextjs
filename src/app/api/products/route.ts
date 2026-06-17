@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { uploadProductImage } from "@/lib/cloudinary";
+import { getCurrentUser } from "@/lib/current-user";
 import { createValidationErrorResponse } from "@/lib/validation";
 import { createProduct, getProducts } from "@/services/product.service";
 import { createProductFormSchema } from "@/validations/product.schema";
@@ -14,7 +15,7 @@ export async function GET() {
       ok: true,
       products,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         ok: false,
@@ -28,6 +29,28 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "No autenticado",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (user.role !== "admin") {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "No autorizado para crear productos",
+        },
+        { status: 403 }
+      );
+    }
+
     const contentType = request.headers.get("content-type") ?? "";
 
     if (!contentType.includes("multipart/form-data")) {
@@ -86,7 +109,7 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         ok: false,

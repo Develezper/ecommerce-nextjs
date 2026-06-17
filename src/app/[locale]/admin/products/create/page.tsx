@@ -19,6 +19,10 @@ export default async function ProductCreatePage({
     redirect(`/${locale}/login`);
   }
 
+  if (user.role !== "admin") {
+    redirect(`/${locale}`);
+  }
+
   return (
     <main className="min-h-screen px-6 py-10">
       <section className="mx-auto max-w-3xl space-y-6">

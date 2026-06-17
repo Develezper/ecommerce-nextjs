@@ -29,3 +29,15 @@ Example using a header:
 curl -X GET http://localhost:3000/api/cron/sales-report \
   -H "x-cron-secret: YOUR_SECRET"
 ```
+
+## Admin Role
+
+To allow product creation from the admin view, open the `users` collection in MongoDB Compass, find the target user, and set:
+
+```json
+{
+  "role": "admin"
+}
+```
+
+If the user was already logged in before this change, log out and log in again so the JWT includes the updated role.

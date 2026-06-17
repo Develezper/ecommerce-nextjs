@@ -1,3 +1,5 @@
+export type AuthRole = "user" | "admin";
+
 export type RegisterInput = {
   name: string;
   email: string;
@@ -13,6 +15,7 @@ export type AuthUserResponse = {
   _id: string;
   name: string;
   email: string;
+  role: AuthRole;
 };
 
 export type LoginResponse = {

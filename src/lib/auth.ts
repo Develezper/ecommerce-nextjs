@@ -1,10 +1,17 @@
 import { jwtVerify } from "jose";
 
+import type { AuthRole } from "@/types/auth";
+
 export type AuthPayload = {
   userId: string;
   name: string;
   email: string;
+  role: AuthRole;
 };
+
+export function normalizeUserRole(role: unknown): AuthRole {
+  return role === "admin" ? "admin" : "user";
+}
 
 function getJwtSecret() {
   const JWT_SECRET = process.env.JWT_SECRET;
@@ -26,6 +33,7 @@ export async function verifyAuthToken(
       userId: payload.userId as string,
       name: payload.name as string,
       email: payload.email as string,
+      role: normalizeUserRole(payload.role),
     };
   } catch {
     return null;

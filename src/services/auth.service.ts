@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
 import { connectDB } from "@/lib/mongodb";
+import { normalizeUserRole } from "@/lib/auth";
 import {
   isValidEmail,
   MIN_NAME_LENGTH,
@@ -89,6 +90,7 @@ export async function registerUser(
     _id: user._id.toString(),
     name: user.name,
     email: user.email,
+    role: normalizeUserRole(user.role),
   };
 
   try {
@@ -132,6 +134,7 @@ export async function loginUser(data: LoginInput): Promise<LoginResponse> {
     userId: user._id.toString(),
     name: user.name,
     email: user.email,
+    role: normalizeUserRole(user.role),
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -144,6 +147,7 @@ export async function loginUser(data: LoginInput): Promise<LoginResponse> {
       _id: user._id.toString(),
       name: user.name,
       email: user.email,
+      role: normalizeUserRole(user.role),
     },
   };
 }

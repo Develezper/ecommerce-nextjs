@@ -1,9 +1,11 @@
 import { Schema, models, model } from "mongoose";
+import type { AuthRole } from "@/types/auth";
 
 export type UserDocument = {
   name: string;
   email: string;
   passwordHash: string;
+  role: AuthRole;
 };
 
 const userSchema = new Schema<UserDocument>(
@@ -24,6 +26,13 @@ const userSchema = new Schema<UserDocument>(
 
     passwordHash: {
       type: String,
+      required: true,
+    },
+
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
       required: true,
     },
   },
