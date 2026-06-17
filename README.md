@@ -1,27 +1,31 @@
-# Cron de reporte de ventas
+# Sales Report Cron
 
-## Variables de entorno
+## Production URL
 
-- `GMAIL_USER`: cuenta de Gmail usada para enviar correos desde la app.
-- `GMAIL_APP_PASSWORD`: App Password de Gmail para autenticar Nodemailer.
-- `SALES_REPORT_EMAIL`: correo que recibirá el reporte diario de ventas del mes en curso.
-- `CRON_SECRET`: secreto requerido para autorizar la ejecución del endpoint del cron.
+https://ecommerce-nextjs-ebon-two.vercel.app/es
 
-## Llamada manual
+## Environment Variables
 
-Se puede ejecutar manualmente con una petición `GET` al endpoint:
+- `GMAIL_USER`: Gmail account used by the app to send emails.
+- `GMAIL_APP_PASSWORD`: Gmail App Password used to authenticate Nodemailer.
+- `SALES_REPORT_EMAIL`: Email address that will receive the daily sales report for the current month.
+- `CRON_SECRET`: Secret required to authorize execution of the cron endpoint.
+
+## Manual Trigger
+
+You can run it manually with a `GET` request to:
 
 `/api/cron/sales-report`
 
-Opciones de autenticación soportadas:
+Supported authentication options:
 
-- Header `x-cron-secret: TU_SECRETO`
-- Header `authorization: Bearer TU_SECRETO`
-- Query param `?secret=TU_SECRETO`
+- Header `x-cron-secret: YOUR_SECRET`
+- Header `authorization: Bearer YOUR_SECRET`
+- Query param `?secret=YOUR_SECRET`
 
-Ejemplo con header:
+Example using a header:
 
 ```bash
 curl -X GET http://localhost:3000/api/cron/sales-report \
-  -H "x-cron-secret: TU_SECRETO"
+  -H "x-cron-secret: YOUR_SECRET"
 ```
