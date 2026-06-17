@@ -1,12 +1,11 @@
 "use client";
 
-import axios from "axios";
 import type { ChangeEvent, FormEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { api } from "@/lib/api";
+import { api, axios } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 type ProductFormFields = {
@@ -34,7 +33,10 @@ const initialFormValues: ProductFormFields = {
 };
 
 export function ProductCreateForm() {
-  const [formValues, setFormValues] = useState<ProductFormFields>(initialFormValues);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [formValues, setFormValues] = useState<ProductFormFields>(
+    initialFormValues
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<MessageTone>("success");
@@ -88,6 +90,9 @@ export function ProductCreateForm() {
 
       setFormValues(initialFormValues);
       setImageFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       setMessage(response.data.message ?? "Producto creado correctamente");
       setMessageTone("success");
     } catch (error: unknown) {
@@ -217,6 +222,7 @@ export function ProductCreateForm() {
             name="image"
             type="file"
             accept="image/*"
+            ref={fileInputRef}
             onChange={handleImageChange}
             disabled={isLoading}
             required

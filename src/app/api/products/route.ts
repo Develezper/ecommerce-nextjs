@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 import { uploadProductImage } from "@/lib/cloudinary";
 import { createValidationErrorResponse } from "@/lib/validation";
 import { createProduct, getProducts } from "@/services/product.service";
-import {
-  createProductFormSchema,
-  createProductSchema,
-} from "@/validations/product.schema";
+import { createProductFormSchema } from "@/validations/product.schema";
 
 export const runtime = "nodejs";
 
@@ -33,63 +30,53 @@ export async function POST(request: Request) {
   try {
     const contentType = request.headers.get("content-type") ?? "";
 
-    if (contentType.includes("multipart/form-data")) {
-      const formData = await request.formData();
-      const parsedFormData = createProductFormSchema.safeParse({
-        name: formData.get("name"),
-        price: formData.get("price"),
-        shortDescription: formData.get("shortDescription"),
-        description: formData.get("description"),
-        specifications: formData.get("specifications"),
-        stock: formData.get("stock"),
-        image: formData.get("image"),
-      });
-
-      if (!parsedFormData.success) {
-        return createValidationErrorResponse(parsedFormData.error);
-      }
-
-      const {
-        image,
-        name,
-        price,
-        shortDescription,
-        description,
-        specifications,
-        stock,
-      } = parsedFormData.data;
-      const imageArrayBuffer = await image.arrayBuffer();
-      const imageBuffer = Buffer.from(imageArrayBuffer);
-      const imageUrl = await uploadProductImage(imageBuffer);
-
-      const product = await createProduct({
-        name,
-        price,
-        image: imageUrl,
-        shortDescription,
-        description,
-        specifications,
-        stock,
-      });
-
+    if (!contentType.includes("multipart/form-data")) {
       return NextResponse.json(
         {
-          ok: true,
-          message: "Producto creado correctamente",
-          product,
+          ok: false,
+          message: "Debes enviar el producto como FormData con una imagen",
         },
-        { status: 201 }
+        { status: 400 }
       );
     }
 
-    const body: unknown = await request.json();
-    const parsedBody = createProductSchema.safeParse(body);
+    const formData = await request.formData();
+    const parsedFormData = createProductFormSchema.safeParse({
+      name: formData.get("name"),
+      price: formData.get("price"),
+      shortDescription: formData.get("shortDescription"),
+      description: formData.get("description"),
+      specifications: formData.get("specifications"),
+      stock: formData.get("stock"),
+      image: formData.get("image"),
+    });
 
-    if (!parsedBody.success) {
-      return createValidationErrorResponse(parsedBody.error);
+    if (!parsedFormData.success) {
+      return createValidationErrorResponse(parsedFormData.error);
     }
 
-    const product = await createProduct(parsedBody.data);
+    const {
+      image,
+      name,
+      price,
+      shortDescription,
+      description,
+      specifications,
+      stock,
+    } = parsedFormData.data;
+    const imageArrayBuffer = await image.arrayBuffer();
+    const imageBuffer = Buffer.from(imageArrayBuffer);
+    const imageUrl = await uploadProductImage(imageBuffer);
+
+    const product = await createProduct({
+      name,
+      price,
+      image: imageUrl,
+      shortDescription,
+      description,
+      specifications,
+      stock,
+    });
 
     return NextResponse.json(
       {
