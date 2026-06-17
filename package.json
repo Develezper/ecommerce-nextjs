@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:users": "bun run scripts/seed-demo-users.mts"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^4.2.0",

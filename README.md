@@ -32,7 +32,21 @@ curl -X GET http://localhost:3000/api/cron/sales-report \
 
 ## Admin Role
 
-To allow product creation from the admin view, open the `users` collection in MongoDB Compass, find the target user, and set:
+To allow product creation from the admin view, you have two simple options:
+
+1. Run the demo users seed:
+
+```bash
+bun run seed:users
+```
+
+Demo credentials created by the seed:
+
+- Admin: `admin@ecommerce.local` / `Admin123!`
+- User: `cliente1@ecommerce.local` / `User123!`
+- User: `cliente2@ecommerce.local` / `User123!`
+
+2. Or change an existing user in MongoDB Compass by setting:
 
 ```json
 {
@@ -40,4 +54,4 @@ To allow product creation from the admin view, open the `users` collection in Mo
 }
 ```
 
-If the user was already logged in before this change, log out and log in again so the JWT includes the updated role.
+If a user was already logged in before the role change, log out and log in again so the JWT includes the updated role.
