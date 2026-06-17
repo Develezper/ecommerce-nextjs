@@ -125,14 +125,69 @@ export async function sendWelcomeEmail({
 }: WelcomeEmailInput): Promise<void> {
   const normalizedName = name.trim() || "cliente";
   const escapedName = escapeHtml(normalizedName);
-  const subject = "Bienvenido a nuestra tienda";
-  const text = `Hola ${normalizedName}, tu cuenta fue creada correctamente. Gracias por registrarte en nuestra tienda.`;
+  const subject = "Bienvenido a Beauty Store";
+  const text = [
+    `Hola ${normalizedName},`,
+    "",
+    "Tu cuenta fue creada correctamente en Beauty Store.",
+    "Ya puedes iniciar sesion y explorar nuestros productos.",
+    "",
+    "Explorar productos: /",
+    "",
+    "Gracias por confiar en Beauty Store.",
+  ].join("\n");
   const html = `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
-      <h1 style="margin-bottom: 16px;">Bienvenido a nuestra tienda</h1>
-      <p>Hola ${escapedName},</p>
-      <p>Tu cuenta fue creada correctamente y ya puedes iniciar sesion para explorar productos y comprar.</p>
-      <p>Gracias por registrarte con nosotros.</p>
+    <div style="margin:0; padding:24px; background-color:#fff5f8; font-family:Arial, Helvetica, sans-serif; color:#4b244a;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+        <tr>
+          <td align="center">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px; border-collapse:collapse; background-color:#ffffff; border:1px solid #f9d7e3; border-radius:24px; overflow:hidden;">
+              <tr>
+                <td style="padding:40px 40px 24px; background:linear-gradient(180deg, #ffe3ed 0%, #fff8fb 100%); text-align:center;">
+                  <p style="margin:0 0 12px; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#c75b7a; font-weight:700;">
+                    Beauty Store
+                  </p>
+                  <h1 style="margin:0; font-size:32px; line-height:1.2; color:#9d174d;">
+                    Bienvenido a Beauty Store
+                  </h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:32px 40px 40px;">
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.7;">
+                    Hola <strong>${escapedName}</strong>,
+                  </p>
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.7; color:#6b3c58;">
+                    Tu cuenta fue creada correctamente y ya puedes descubrir productos pensados para realzar tu rutina de belleza.
+                  </p>
+                  <p style="margin:0 0 28px; font-size:16px; line-height:1.7; color:#6b3c58;">
+                    Nos alegra tenerte con nosotros. Preparamos una experiencia suave, cercana y llena de detalles para ti.
+                  </p>
+                  <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 auto 28px; border-collapse:collapse;">
+                    <tr>
+                      <td align="center" style="border-radius:999px; background-color:#ec4899;">
+                        <a href="/" style="display:inline-block; padding:14px 28px; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none;">
+                          Explorar productos
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="margin:0; font-size:15px; line-height:1.7; color:#6b3c58;">
+                    Gracias por elegirnos y ser parte de Beauty Store.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 40px; text-align:center; background-color:#fff1f6; border-top:1px solid #f9d7e3;">
+                  <p style="margin:0; font-size:13px; color:#9f5673;">
+                    Beauty Store
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
     </div>
   `;
 
