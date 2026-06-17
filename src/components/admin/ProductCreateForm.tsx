@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import type { ChangeEvent, FormEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,13 +35,23 @@ const initialFormValues: ProductFormFields = {
 
 export function ProductCreateForm() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
   const [formValues, setFormValues] = useState<ProductFormFields>(
     initialFormValues
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<MessageTone>("success");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
 
   function handleChange(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,7 +67,20 @@ export function ProductCreateForm() {
   function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
     const nextImage = event.target.files?.[0] ?? null;
 
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
+
     setImageFile(nextImage);
+    if (!nextImage) {
+      setImagePreviewUrl(null);
+      return;
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(nextImage);
+    previewUrlRef.current = nextPreviewUrl;
+    setImagePreviewUrl(nextPreviewUrl);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -90,6 +114,11 @@ export function ProductCreateForm() {
 
       setFormValues(initialFormValues);
       setImageFile(null);
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = null;
+      }
+      setImagePreviewUrl(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -227,6 +256,21 @@ export function ProductCreateForm() {
             disabled={isLoading}
             required
           />
+          {imagePreviewUrl ? (
+            <div className="overflow-hidden rounded-[1.5rem] border border-pink-100 bg-pink-50/40 p-3">
+              <p className="mb-3 text-sm text-muted-foreground">
+                Vista previa de la imagen seleccionada
+              </p>
+              <Image
+                src={imagePreviewUrl}
+                alt="Vista previa de la imagen del producto"
+                width={800}
+                height={512}
+                unoptimized
+                className="h-64 w-full rounded-[1.25rem] object-cover"
+              />
+            </div>
+          ) : null}
         </div>
       </div>
 
