@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { createValidationErrorResponse } from "@/lib/validation";
 import { createProduct, getProducts } from "@/services/product.service";
+import { createProductSchema } from "@/validations/product.schema";
 
 export const runtime = "nodejs";
 
@@ -25,9 +27,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body: unknown = await request.json();
+    const parsedBody = createProductSchema.safeParse(body);
 
-    const product = await createProduct(body);
+    if (!parsedBody.success) {
+      return createValidationErrorResponse(parsedBody.error);
+    }
+
+    const product = await createProduct(parsedBody.data);
 
     return NextResponse.json(
       {

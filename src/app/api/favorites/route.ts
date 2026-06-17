@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/lib/current-user";
+import { createValidationErrorResponse } from "@/lib/validation";
 import {
   getFavoriteProducts,
   toggleFavorite,
 } from "@/services/favorite.service";
+import { favoriteSchema } from "@/validations/favorite.schema";
 
 export const runtime = "nodejs";
 
@@ -56,21 +58,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = (await request.json()) as {
-      productId?: string;
-    };
+    const body: unknown = await request.json();
+    const parsedBody = favoriteSchema.safeParse(body);
 
-    if (!body.productId) {
-      return NextResponse.json(
-        {
-          ok: false,
-          message: "El productId es obligatorio",
-        },
-        { status: 400 }
-      );
+    if (!parsedBody.success) {
+      return createValidationErrorResponse(parsedBody.error);
     }
 
-    const favorite = await toggleFavorite(user.userId, body.productId);
+    const favorite = await toggleFavorite(user.userId, parsedBody.data.productId);
 
     return NextResponse.json({
       ok: true,

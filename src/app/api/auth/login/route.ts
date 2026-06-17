@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server";
 
+import { createValidationErrorResponse } from "@/lib/validation";
 import { loginUser } from "@/services/auth.service";
+import { loginSchema } from "@/validations/auth.schema";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body: unknown = await request.json();
+    const parsedBody = loginSchema.safeParse(body);
 
-    const { token, user } = await loginUser(body);
+    if (!parsedBody.success) {
+      return createValidationErrorResponse(parsedBody.error);
+    }
+
+    const { token, user } = await loginUser(parsedBody.data);
 
     const response = NextResponse.json({
       ok: true,
@@ -25,7 +32,7 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         ok: false,

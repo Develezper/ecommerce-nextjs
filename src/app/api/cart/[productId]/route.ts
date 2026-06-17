@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/lib/current-user";
+import { createValidationErrorResponse } from "@/lib/validation";
 import {
   removeProductFromCart,
   updateCartProductQuantity,
 } from "@/services/cart.service";
+import { updateCartQuantitySchema } from "@/validations/cart.schema";
 
 export const runtime = "nodejs";
-
-type UpdateCartQuantityBody = {
-  quantity?: unknown;
-};
 
 function getErrorStatus(message: string) {
   if (
@@ -45,25 +43,18 @@ export async function PATCH(
       );
     }
 
-    const body = (await request.json()) as UpdateCartQuantityBody;
-    const quantity =
-      typeof body.quantity === "number" ? body.quantity : Number.NaN;
+    const body: unknown = await request.json();
+    const parsedBody = updateCartQuantitySchema.safeParse(body);
 
-    if (!Number.isInteger(quantity) || quantity <= 0) {
-      return NextResponse.json(
-        {
-          ok: false,
-          message: "La cantidad debe ser mayor a 0",
-        },
-        { status: 400 }
-      );
+    if (!parsedBody.success) {
+      return createValidationErrorResponse(parsedBody.error);
     }
 
     const { productId } = await params;
     const cart = await updateCartProductQuantity(
       user.userId,
       productId,
-      quantity
+      parsedBody.data.quantity
     );
 
     return NextResponse.json({

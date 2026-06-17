@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/lib/current-user";
+import { createValidationErrorResponse } from "@/lib/validation";
 import { addProductToCart, getUserCart } from "@/services/cart.service";
+import { addCartProductSchema } from "@/validations/cart.schema";
 
 export const runtime = "nodejs";
-
-type AddCartProductBody = {
-  productId?: unknown;
-};
 
 function getErrorStatus(message: string) {
   if (message.includes("inválido") || message.includes("obligatorio")) {
@@ -70,19 +68,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = (await request.json()) as AddCartProductBody;
+    const body: unknown = await request.json();
+    const parsedBody = addCartProductSchema.safeParse(body);
 
-    if (typeof body.productId !== "string" || body.productId.trim() === "") {
-      return NextResponse.json(
-        {
-          ok: false,
-          message: "El productId es obligatorio",
-        },
-        { status: 400 }
-      );
+    if (!parsedBody.success) {
+      return createValidationErrorResponse(parsedBody.error);
     }
 
-    const cart = await addProductToCart(user.userId, body.productId);
+    const cart = await addProductToCart(user.userId, parsedBody.data.productId);
 
     return NextResponse.json({
       ok: true,

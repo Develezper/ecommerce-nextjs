@@ -36,7 +36,7 @@ function validateRegisterData(data: RegisterInput) {
   }
 
   if (password.length < MIN_PASSWORD_LENGTH) {
-    throw new Error("La contraseña debe tener al menos 8 caracteres");
+    throw new Error("La contraseña debe tener al menos 6 caracteres");
   }
 
   return {
