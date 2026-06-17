@@ -2,6 +2,8 @@
 
 ## Variables de entorno
 
+- `GMAIL_USER`: cuenta de Gmail usada para enviar correos desde la app.
+- `GMAIL_APP_PASSWORD`: App Password de Gmail para autenticar Nodemailer.
 - `SALES_REPORT_EMAIL`: correo que recibirá el reporte diario de ventas del mes en curso.
 - `CRON_SECRET`: secreto requerido para autorizar la ejecución del endpoint del cron.
 

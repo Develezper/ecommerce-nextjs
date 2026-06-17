@@ -3,11 +3,8 @@ import nodemailer, { type Transporter } from "nodemailer";
 import type { CurrentMonthSalesReport } from "@/types/sale";
 
 type MailEnvironment = {
-  host: string;
-  port: number;
-  user: string;
-  pass: string;
-  from: string;
+  gmailUser: string;
+  gmailAppPassword: string;
 };
 
 type SendEmailInput = {
@@ -34,38 +31,20 @@ function escapeHtml(value: string): string {
 }
 
 function getMailEnvironment(): MailEnvironment {
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.MAIL_FROM;
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
 
-  if (!host) {
-    throw new Error("SMTP_HOST no está definida");
+  if (!gmailUser) {
+    throw new Error("GMAIL_USER no está definida");
   }
 
-  if (!process.env.SMTP_PORT || Number.isNaN(port)) {
-    throw new Error("SMTP_PORT no es válida");
-  }
-
-  if (!user) {
-    throw new Error("SMTP_USER no está definida");
-  }
-
-  if (!pass) {
-    throw new Error("SMTP_PASS no está definida");
-  }
-
-  if (!from) {
-    throw new Error("MAIL_FROM no está definida");
+  if (!gmailAppPassword) {
+    throw new Error("GMAIL_APP_PASSWORD no está definida");
   }
 
   return {
-    host,
-    port,
-    user,
-    pass,
-    from,
+    gmailUser,
+    gmailAppPassword,
   };
 }
 
@@ -84,15 +63,13 @@ function getTransporter(): Transporter {
     return transporter;
   }
 
-  const { host, port, user, pass } = getMailEnvironment();
+  const { gmailUser, gmailAppPassword } = getMailEnvironment();
 
   transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
+    service: "gmail",
     auth: {
-      user,
-      pass,
+      user: gmailUser,
+      pass: gmailAppPassword,
     },
     connectionTimeout: 5000,
     greetingTimeout: 5000,
@@ -131,10 +108,10 @@ export async function sendEmail({
   html,
   text,
 }: SendEmailInput): Promise<void> {
-  const { from } = getMailEnvironment();
+  const { gmailUser } = getMailEnvironment();
 
   await getTransporter().sendMail({
-    from,
+    from: `Beauty Store <${gmailUser}>`,
     to,
     subject,
     html,
